@@ -9,6 +9,7 @@ secret:
   dashboard:
     username: admin
     password: admin
+    openAiApiKey: api-key
   db:
     password: example123456
     database: postgres
@@ -27,7 +28,9 @@ secret:
 db:
   enabled: true
   image:
-    tag: 15.8.1.085
+    repository: supabase/postgres
+    pullPolicy: IfNotPresent
+    tag: 17.6.1.066
   livenessProbe:
     exec:
       command:
@@ -46,17 +49,34 @@ db:
     enabled: false
 
 studio:
+  enabled: true
   image:
-    tag: 2025.11.10-sha-5291fe3
+    repository: supabase/studio
+    pullPolicy: IfNotPresent
+    tag: "latest"
   environment:
     DEFAULT_ORGANIZATION_NAME: Default Organization
     DEFAULT_PROJECT_NAME: Default Project
     SUPABASE_PUBLIC_URL: http://agentic.staging.floorzap.info
     NEXT_PUBLIC_ENABLE_LOGS: true
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
+  livenessProbe:
+    tcpSocket:
+      port: 3000
+    initialDelaySeconds: 3
 
 auth:
+  enabled: true
   image:
-    tag: v2.182.1
+    repository: supabase/gotrue
+    pullPolicy: IfNotPresent
+    tag: "v2.184.0"
   environment:
     API_EXTERNAL_URL: http://agentic.staging.floorzap.info
     GOTRUE_SITE_URL: http://agentic.staging.floorzap.info
@@ -66,38 +86,124 @@ auth:
     GOTRUE_SMTP_HOST: "smtp.agentic.staging.floorzap.info"
     GOTRUE_SMTP_PORT: "587"
     GOTRUE_SMTP_SENDER_NAME: "your-mail@agentic.staging.floorzap.info"
+    DB_USER: supabase_admin
+    DB_DRIVER: postgres
+    DB_PORT: 5432
+    DB_SSL: disable
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
 
 rest:
+  enabled: true
   image:
-    tag: v13.0.7
+    repository: postgrest/postgrest
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  environment:
+    DB_USER: supabase_admin
+    DB_SSL: disable
+    DB_PORT: 5432
+    DB_DRIVER: postgres
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
 
 realtime:
+  enabled: true
   image:
-    tag: v2.63.0
+    repository: supabase/realtime
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  environment:
+    DB_USER: supabase_admin
+    DB_SSL: false
+    DB_PORT: 5432
+    DB_DRIVER: postgres
+    APP_NAME: realtime
+    DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
+    DB_ENC_KEY: supabaserealtime
+    ERL_AFLAGS: -proto_dist inet_tcp
+    DNS_NODES: "''"
+    RLIMIT_NOFILE: "10000"
+    SEED_SELF_HOST: "true"
+    RUN_JANITOR: "true"
   livenessProbe:
     httpGet:
       path: /
       port: 4000
     initialDelaySeconds: 3
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
 
 meta:
+  enabled: true
   image:
-    tag: v0.93.1
+    repository: supabase/postgres-meta
+    pullPolicy: IfNotPresent
+    tag: "v0.95.1"
+  environment:
+    DB_SSL: disable
+    DB_USER: supabase_admin
+    DB_PORT: 5432
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
 
 storage:
+  enabled: true
   image:
-    tag: v1.29.0
+    repository: supabase/storage-api
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  environment:
+    DB_USER: supabase_admin
+    DB_PORT: 5432
+    DB_SSL: disable
+    DB_DRIVER: postgres
+    REQUEST_ALLOW_X_FORWARDED_PATH: "true"
+    FILE_SIZE_LIMIT: 5242880000
+    STORAGE_BACKEND: file
+    FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+    ENABLE_IMAGE_TRANSFORMATION: "true"
   livenessProbe:
     httpGet:
       path: /status
       port: 5000
     initialDelaySeconds: 3
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
   persistence:
     enabled: false
 
 imgproxy:
+  enabled: true
   image:
-    tag: v3.8.0
+    repository: darthsim/imgproxy
+    pullPolicy: IfNotPresent
+    tag: "latest"
   environment:
     IMGPROXY_ENABLE_WEBP_DETECTION: "true"
   livenessProbe:
@@ -108,23 +214,42 @@ imgproxy:
     initialDelaySeconds: 3
   persistence:
     enabled: false
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
 
 kong:
+  enabled: true
   image:
     repository: kong
     tag: 2.8.1
   environment:
+    KONG_DATABASE: "off"
     KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
     KONG_LOG_LEVEL: info
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
   ingress:
     enabled: true
     className: "nginx"
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
-    tls: []
-      # - secretName: example-ingress-tls
-      #   hosts:
-      #     - agentic.staging.floorzap.info
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    tls:
+      - secretName: supabase-tls
+        hosts:
+          - agentic.staging.floorzap.info
     hosts:
       - host: agentic.staging.floorzap.info
         paths:
@@ -134,6 +259,8 @@ kong:
 analytics:
   image:
     tag: 1.22.6
+  environment:
+    DB_PORT: 5432
   livenessProbe:
     httpGet:
       path: /health
