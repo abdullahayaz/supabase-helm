@@ -32,7 +32,7 @@ spec:
         - args:
             - start
             - --main-service
-            - /home/deno/functions/main
+            - /home/deno/functions/acs-call-automation
           name: {{ include "supabase.functions.name" $ }}
           securityContext:
             {{- toYaml .Values.functions.securityContext | nindent 12 }}
@@ -158,4 +158,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJmbG93Zmlyc3QuYXp1cmVjci5pbyI6eyJ1c2VybmFtZSI6ImZsb3dmaXJzdCIsInBhc3N3b3JkIjoidDhvc2lDQmpqc095aXhNcUZyQXc3RmxtSkhvWFNTZ0hSNStoTFB5YUZ6K0FDUkN2b3FIZyIsImF1dGgiOiJabXh2ZDJacGNuTjBPblE0YjNOcFEwSnFhbk5QZVdsNFRYRkdja0YzTjBac2JVcEliMWhUVTJkSVVqVXJhRXhRZVdGR2VpdEJRMUpEZG05eFNHYz0ifX19
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: acr-secret
+type: kubernetes.io/dockerconfigjson
 {{- end }}

@@ -257,21 +257,41 @@ kong:
             pathType: Prefix
 
 analytics:
+  enabled: true
   image:
-    tag: 1.22.6
+    repository: supabase/logflare
+    pullPolicy: IfNotPresent
+    tag: "1.27.3"
   environment:
+    DB_USERNAME: supabase_admin
     DB_PORT: 5432
+    DB_DRIVER: postgres
+    DB_SCHEMA: _analytics
+    DB_DATABASE: _supabase
+    FEATURE_FLAG_OVERRIDE: multibackend=true
+    LOGFLARE_SINGLE_TENANT: "true"
+    LOGFLARE_SUPABASE_MODE: "true"
   livenessProbe:
     httpGet:
       path: /health
       port: 4000
     initialDelaySeconds: 3
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
   bigQuery:
     enabled: false
 
 vector:
+  enabled: true
   image:
-    tag: 0.28.1-alpine
+    repository: timberio/vector
+    pullPolicy: IfNotPresent
+    tag: "nightly-debian"
   livenessProbe:
     httpGet:
       path: /health
@@ -280,6 +300,13 @@ vector:
   ## Vector requires logs from the control plane to function.
   ## This is normally stored in /var/log/pods
   ## Modify these values according to your environment.
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
   volumeMounts:
     - name: pod-logs
       mountPath: /var/log/pods
@@ -289,8 +316,20 @@ vector:
         path: /var/log/pods
 
 functions:
+  enabled: true
   image:
-    tag: v1.68.4
+    repository: flowfirst.azurecr.io/supabase-edge/functions
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  serviceAccount:
+    create: true
+  imagePullSecrets:
+    - name: acr-secret
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
 
 minio:
   image:
