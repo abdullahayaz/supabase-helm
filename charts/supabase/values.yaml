@@ -1,25 +1,28 @@
 secret:
   jwt:
-    anonKey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
-    serviceKey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
-    secret: your-super-secret-jwt-token-with-at-least-32-characters-long
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzY3MDM0ODAwLCJleHAiOjE5MjQ4MDEyMDB9.3FzYb32-dv1XQE9U_AG1t662Uu15nF8NRoH0vAC6Pyk"
+    serviceKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NjcwMzQ4MDAsImV4cCI6MTkyNDgwMTIwMH0.2xTMLxC8O7i0wskvG5cQ6ILwkoFR_5oOcWQ1Bn0DpSs"
+    secret: "zZxVbxUUJtPLEkKGcV77HGMzuK8ANCUPqrKOg70V"
   smtp:
-    username: your-mail@example.com
+    username: your-mail@agentic.staging.floorzap.info
     password: example123456
   dashboard:
-    username: supabase
-    password: this_password_is_insecure_and_should_be_updated
-    openAiApiKey: api-key
+    username: admin
+    password: admin
   db:
     password: example123456
     database: postgres
   analytics:
-    publicAccessToken: your-super-secret-and-long-logflare-key-public
-    privateAccessToken: your-super-secret-and-long-logflare-key-private
+    publicAccessToken: mL79jbAlfZDsfqJWbBQtFkZJfb241WW0
+    privateAccessToken: 2Q2M2SlIorbgXlF/UiorQ35AqRAu80q6
   realtime:
-    secretKeyBase: UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq
+    secretKeyBase: n7wZI92Jv0km5yF3hxaq0AsFmfvr0eqPQUHNUpwvyvb/+sE7WM/UjC1L0Wk2aX1u
   meta:
-    cryptoKey: "your-super-secret-and-long-crypto-key"
+    cryptoKey: "ge7Y0I3z0zB+KIqMPzg6blLIsL9I9Ttx"
+  s3:
+    isValid: false
+    keyId: "asdvajsd"
+    accessKey: "asdbjahsbdjhasd"
 
 db:
   enabled: true
@@ -32,6 +35,13 @@ db:
         - -U
         - postgres
     initialDelaySeconds: 3
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 5432
+  autoscaling:
+    enabled: false
   persistence:
     enabled: false
 
@@ -41,21 +51,21 @@ studio:
   environment:
     DEFAULT_ORGANIZATION_NAME: Default Organization
     DEFAULT_PROJECT_NAME: Default Project
-    SUPABASE_PUBLIC_URL: http://example.com
+    SUPABASE_PUBLIC_URL: http://agentic.staging.floorzap.info
     NEXT_PUBLIC_ENABLE_LOGS: true
 
 auth:
   image:
     tag: v2.182.1
   environment:
-    API_EXTERNAL_URL: http://example.com
-    GOTRUE_SITE_URL: http://example.com
+    API_EXTERNAL_URL: http://agentic.staging.floorzap.info
+    GOTRUE_SITE_URL: http://agentic.staging.floorzap.info
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@example.com"
-    GOTRUE_SMTP_HOST: "smtp.example.com"
+    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@agentic.staging.floorzap.info"
+    GOTRUE_SMTP_HOST: "smtp.agentic.staging.floorzap.info"
     GOTRUE_SMTP_PORT: "587"
-    GOTRUE_SMTP_SENDER_NAME: "your-mail@example.com"
+    GOTRUE_SMTP_SENDER_NAME: "your-mail@agentic.staging.floorzap.info"
 
 rest:
   image:
@@ -114,9 +124,9 @@ kong:
     tls: []
       # - secretName: example-ingress-tls
       #   hosts:
-      #     - example.com
+      #     - agentic.staging.floorzap.info
     hosts:
-      - host: example.com
+      - host: agentic.staging.floorzap.info
         paths:
           - path: /
             pathType: Prefix
@@ -129,6 +139,8 @@ analytics:
       path: /health
       port: 4000
     initialDelaySeconds: 3
+  bigQuery:
+    enabled: false
 
 vector:
   image:
@@ -152,3 +164,25 @@ vector:
 functions:
   image:
     tag: v1.68.4
+
+minio:
+  image:
+    repository: minio/minio
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  enabled: true
+  serviceAccount:
+    create: true
+  service:
+    type: ClusterIP
+    port: 9001
+  autoscaling:
+    enabled: false
+  persistence:
+    enabled: true
+    storageClassName: "managed-csi"
+    annotations: {}
+    size: 8Gi
+    accessModes:
+      - ReadWriteOnce
+    class: ""
