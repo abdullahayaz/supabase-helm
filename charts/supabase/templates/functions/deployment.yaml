@@ -29,11 +29,13 @@ spec:
       securityContext:
         {{- toYaml .Values.functions.podSecurityContext | nindent 8 }}
       containers:
-        - args:
+        - name: {{ include "supabase.functions.name" $ }}
+          {{- if .Values.functions.args }}
+          args:
             - start
             - --main-service
             - /home/deno/functions/acs-call-automation
-          name: {{ include "supabase.functions.name" $ }}
+          {{- end }}
           securityContext:
             {{- toYaml .Values.functions.securityContext | nindent 12 }}
           image: "{{ .Values.functions.image.repository }}:{{ .Values.functions.image.tag | default .Chart.AppVersion }}"
@@ -133,8 +135,10 @@ spec:
             {{- with .Values.functions.volumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if .Values.functions.mainConfigMap.enabled }}
             - mountPath: /home/deno/functions/main
               name: functions-main
+            {{- end }}
           {{- with .Values.functions.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

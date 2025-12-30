@@ -316,6 +316,8 @@ vector:
         path: /var/log/pods
 
 functions:
+  mainConfigMap:
+    enabled: false
   enabled: true
   image:
     repository: flowfirst.azurecr.io/supabase-edge/functions
