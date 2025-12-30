@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flowfirst
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJlZGdlZnVuY3Rpb25zLmF6dXJlY3IuaW8iOnsidXNlcm5hbWUiOiJlZGdlZnVuY3Rpb25zIiwicGFzc3dvcmQiOiJ3VGxWR21NK3RsUENiZEpZVHZoR0gvS1I5UWZQVnhSbXQrNlRVSlkydDYrQUNSRDFHMlVMIiwiYXV0aCI6IlpXUm5aV1oxYm1OMGFXOXVjenAzVkd4V1IyMU5LM1JzVUVOaVpFcFpWSFpvUjBndlMxSTVVV1pRVm5oU2JYUXJObFJWU2xreWREWXJRVU5TUkRGSE1sVk0ifX19
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: acr-secret
+  namespace: flowfirst
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flowfirst-web
+  namespace: flowfirst
+  labels:
+    app: flowfirst-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flowfirst-web
+  template:
+    metadata:
+      labels:
+        app: flowfirst-web
+    spec:
+      # If your image is in a private registry, uncomment imagePullSecrets
+      # imagePullSecrets:
+      #   - name: regcred
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: web
+          image: flowfirst.azurecr.io/flowfirst/web:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 80
+
+          # Nginx serves "/" so these probes are valid
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flowfirst-web-svc
+  namespace: flowfirst
+  labels:
+    app: flowfirst-web
+spec:
+  type: ClusterIP
+  selector:
+    app: flowfirst-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flowfirst-web
+  namespace: flowfirst
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - test-db.staging.floorzap.info
+    secretName: flowfirst-frontend-tls
+  rules:
+    - host: test-db.staging.floorzap.info
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: flowfirst-web-svc
+                port:
+                  number: 80
