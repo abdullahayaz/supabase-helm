@@ -57,7 +57,7 @@ studio:
   environment:
     DEFAULT_ORGANIZATION_NAME: Default Organization
     DEFAULT_PROJECT_NAME: Default Project
-    SUPABASE_PUBLIC_URL: http://agentic.staging.floorzap.info
+    SUPABASE_PUBLIC_URL: https://agentic.staging.floorzap.info
     NEXT_PUBLIC_ENABLE_LOGS: true
   serviceAccount:
     create: true
@@ -78,8 +78,8 @@ auth:
     pullPolicy: IfNotPresent
     tag: "v2.184.0"
   environment:
-    API_EXTERNAL_URL: http://agentic.staging.floorzap.info
-    GOTRUE_SITE_URL: http://agentic.staging.floorzap.info
+    API_EXTERNAL_URL: https://agentic.staging.floorzap.info
+    GOTRUE_SITE_URL: https://agentic.staging.floorzap.info
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
     GOTRUE_MAILER_AUTOCONFIRM: "true"
     GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@agentic.staging.floorzap.info"
