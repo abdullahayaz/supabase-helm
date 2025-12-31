@@ -46,7 +46,13 @@ db:
   autoscaling:
     enabled: false
   persistence:
-    enabled: false
+    enabled: true
+    storageClassName: "managed-csi"
+    annotations: {}
+    size: 8Gi
+    accessModes:
+      - ReadWriteOnce
+    class: ""
 
 studio:
   enabled: true
@@ -349,9 +355,9 @@ minio:
     enabled: false
   persistence:
     enabled: true
-    storageClassName: "managed-csi"
+    storageClassName: "azurefile-csi"
     annotations: {}
     size: 8Gi
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     class: ""
