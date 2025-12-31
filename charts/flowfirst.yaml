@@ -105,3 +105,21 @@ spec:
                 name: flowfirst-web-svc
                 port:
                   number: 80
+---
+# migration
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: migration
+  namespace: flowfirst
+spec:
+  restartPolicy: Never
+  imagePullSecrets:
+    - name: acr-secret
+  containers:
+    - name: migration
+      image: flowfirst.azurecr.io/flowfirst/migrations:latest
+      command: ["/bin/sh","-c","sleep 360000"]
+      stdin: true
+      tty: true
