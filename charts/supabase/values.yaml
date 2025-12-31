@@ -59,6 +59,7 @@ studio:
     DEFAULT_PROJECT_NAME: Default Project
     SUPABASE_PUBLIC_URL: https://agentic.staging.floorzap.info
     NEXT_PUBLIC_ENABLE_LOGS: true
+    SNIPPETS_MANAGEMENT_FOLDER: /var/lib/studio/snippets
   serviceAccount:
     create: true
   service:
