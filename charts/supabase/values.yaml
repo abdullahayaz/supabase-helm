@@ -47,7 +47,7 @@ db:
     enabled: false
   persistence:
     enabled: true
-    storageClassName: "managed-csi"
+    storageClassName: "azuredisk-retain"
     annotations: {}
     size: 8Gi
     accessModes:
@@ -203,7 +203,13 @@ storage:
   autoscaling:
     enabled: false
   persistence:
-    enabled: false
+    enabled: true
+    storageClassName: "azuredisk-retain"
+    annotations: {}
+    size: 8Gi
+    accessModes:
+      - ReadWriteOnce
+    class: ""
 
 imgproxy:
   enabled: true
@@ -220,7 +226,13 @@ imgproxy:
         - health
     initialDelaySeconds: 3
   persistence:
-    enabled: false
+    enabled: true
+    storageClassName: "azuredisk-retain"
+    annotations: {}
+    size: 8Gi
+    accessModes:
+      - ReadWriteOnce
+    class: ""
   serviceAccount:
     create: true
   service:
@@ -355,7 +367,7 @@ minio:
     enabled: false
   persistence:
     enabled: true
-    storageClassName: "azurefile-csi"
+    storageClassName: "azurefile-retain"
     annotations: {}
     size: 8Gi
     accessModes:
