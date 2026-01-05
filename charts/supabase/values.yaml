@@ -4,7 +4,7 @@ secret:
     serviceKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NjcwMzQ4MDAsImV4cCI6MTkyNDgwMTIwMH0.2xTMLxC8O7i0wskvG5cQ6ILwkoFR_5oOcWQ1Bn0DpSs"
     secret: "zZxVbxUUJtPLEkKGcV77HGMzuK8ANCUPqrKOg70V"
   smtp:
-    username: your-mail@agentic.staging.floorzap.info
+    username: your-mail@hosted.flowfirst.ai
     password: example123456
   dashboard:
     username: admin
@@ -63,7 +63,7 @@ studio:
   environment:
     DEFAULT_ORGANIZATION_NAME: Default Organization
     DEFAULT_PROJECT_NAME: Default Project
-    SUPABASE_PUBLIC_URL: https://agentic.staging.floorzap.info
+    SUPABASE_PUBLIC_URL: https://hosted.flowfirst.ai
     NEXT_PUBLIC_ENABLE_LOGS: true
     SNIPPETS_MANAGEMENT_FOLDER: /var/lib/studio/snippets
   serviceAccount:
@@ -85,14 +85,14 @@ auth:
     pullPolicy: IfNotPresent
     tag: "v2.184.0"
   environment:
-    API_EXTERNAL_URL: https://agentic.staging.floorzap.info
-    GOTRUE_SITE_URL: https://agentic.staging.floorzap.info
+    API_EXTERNAL_URL: https://hosted.flowfirst.ai
+    GOTRUE_SITE_URL: https://hosted.flowfirst.ai
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@agentic.staging.floorzap.info"
-    GOTRUE_SMTP_HOST: "smtp.agentic.staging.floorzap.info"
+    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@hosted.flowfirst.ai"
+    GOTRUE_SMTP_HOST: "smtp.hosted.flowfirst.ai"
     GOTRUE_SMTP_PORT: "587"
-    GOTRUE_SMTP_SENDER_NAME: "your-mail@agentic.staging.floorzap.info"
+    GOTRUE_SMTP_SENDER_NAME: "your-mail@hosted.flowfirst.ai"
     DB_USER: supabase_admin
     DB_DRIVER: postgres
     DB_PORT: 5432
@@ -268,9 +268,9 @@ kong:
     tls:
       - secretName: supabase-tls
         hosts:
-          - agentic.staging.floorzap.info
+          - hosted.flowfirst.ai
     hosts:
-      - host: agentic.staging.floorzap.info
+      - host: hosted.flowfirst.ai
         paths:
           - path: /
             pathType: Prefix
@@ -342,6 +342,8 @@ functions:
     repository: flowfirst.azurecr.io/supabase-edge/functions
     pullPolicy: IfNotPresent
     tag: "latest"
+  environment:
+    ADMIN_SETUP_SECRET: Bottle@1234%
   serviceAccount:
     create: true
   imagePullSecrets:
