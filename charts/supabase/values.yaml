@@ -30,7 +30,7 @@ db:
   image:
     repository: supabase/postgres
     pullPolicy: IfNotPresent
-    tag: 17.6.1.066
+    tag: 17.6.1.066  # latest release hub.docker.com/r/supabase/postgres
   livenessProbe:
     exec:
       command:
@@ -45,7 +45,7 @@ db:
     port: 5432
   autoscaling:
     enabled: false
-  persistence:
+  persistence:     # creates an azure managed disk using azuredisk-retain storage class
     enabled: true
     storageClassName: "azuredisk-retain"
     annotations: {}
@@ -59,13 +59,13 @@ studio:
   image:
     repository: supabase/studio
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "latest" # hub.docker.com/r/supabase/studio
   environment:
-    DEFAULT_ORGANIZATION_NAME: Default Organization
-    DEFAULT_PROJECT_NAME: Default Project
-    SUPABASE_PUBLIC_URL: https://hosted.flowfirst.ai
-    NEXT_PUBLIC_ENABLE_LOGS: true
-    SNIPPETS_MANAGEMENT_FOLDER: /var/lib/studio/snippets
+    DEFAULT_ORGANIZATION_NAME: Default Organization # You can change these default names
+    DEFAULT_PROJECT_NAME: Default Project # You can change these default names
+    SUPABASE_PUBLIC_URL: https://hosted.flowfirst.ai # Your Supabase URL
+    NEXT_PUBLIC_ENABLE_LOGS: true 
+    SNIPPETS_MANAGEMENT_FOLDER: /var/lib/studio/snippets # the location inside studio pod that stores the sql code files written from SQL editor
   serviceAccount:
     create: true
   service:
@@ -83,17 +83,17 @@ auth:
   image:
     repository: supabase/gotrue
     pullPolicy: IfNotPresent
-    tag: "v2.184.0"
+    tag: "v2.184.0"  # https://github.com/supabase/auth/releases
   environment:
     API_EXTERNAL_URL: https://hosted.flowfirst.ai
     GOTRUE_SITE_URL: https://hosted.flowfirst.ai
-    GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+    GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"  # For smpt configuration
     GOTRUE_MAILER_AUTOCONFIRM: "true"
     GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@hosted.flowfirst.ai"
     GOTRUE_SMTP_HOST: "smtp.hosted.flowfirst.ai"
     GOTRUE_SMTP_PORT: "587"
     GOTRUE_SMTP_SENDER_NAME: "your-mail@hosted.flowfirst.ai"
-    DB_USER: supabase_admin
+    DB_USER: supabase_admin   # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_DRIVER: postgres
     DB_PORT: 5432
     DB_SSL: disable
@@ -108,11 +108,11 @@ auth:
 rest:
   enabled: true
   image:
-    repository: postgrest/postgrest
+    repository: postgrest/postgrest # expose postgres as a RESTful API
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "latest" # https://github.com/PostgREST/postgrest/releases
   environment:
-    DB_USER: supabase_admin
+    DB_USER: supabase_admin # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_SSL: disable
     DB_PORT: 5432
     DB_DRIVER: postgres
@@ -124,14 +124,16 @@ rest:
   autoscaling:
     enabled: false
 
-realtime:
+realtime: # service that enables real-time capabilities to Postgres
   enabled: true
   image:
     repository: supabase/realtime
     pullPolicy: IfNotPresent
-    tag: "latest"
-  environment:
-    DB_USER: supabase_admin
+    tag: "latest" # https://github.com/supabase/realtime/releases
+
+  # for details regarding environment variables see https://github.com/supabase/realtime/blob/main/README.md
+  environment: 
+    DB_USER: supabase_admin # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_SSL: false
     DB_PORT: 5432
     DB_DRIVER: postgres
@@ -159,7 +161,7 @@ realtime:
 meta:
   enabled: true
   image:
-    repository: supabase/postgres-meta
+    repository: supabase/postgres-meta # https://github.com/supabase/postgres-meta/releases
     pullPolicy: IfNotPresent
     tag: "v0.95.1"
   environment:
@@ -177,9 +179,10 @@ meta:
 storage:
   enabled: true
   image:
-    repository: supabase/storage-api
+    repository: supabase/storage-api # https://github.com/supabase/storage/releases
     pullPolicy: IfNotPresent
     tag: "latest"
+  # for details regarding environment variables see https://github.com/supabase/storage/blob/master/.env.sample
   environment:
     DB_USER: supabase_admin
     DB_PORT: 5432
@@ -216,7 +219,7 @@ imgproxy:
   image:
     repository: darthsim/imgproxy
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "latest" # https://github.com/imgproxy/imgproxy/releases
   environment:
     IMGPROXY_ENABLE_WEBP_DETECTION: "true"
   livenessProbe:
@@ -245,7 +248,7 @@ kong:
   enabled: true
   image:
     repository: kong
-    tag: 2.8.1
+    tag: 2.8.1 # https://github.com/Kong/kong/releases
   environment:
     KONG_DATABASE: "off"
     KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
