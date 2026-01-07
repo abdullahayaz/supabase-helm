@@ -3,5 +3,7 @@ controller:
     name: nginx
   service:
     type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /healthz
   admissionWebhooks:
     enabled: true
