@@ -37,7 +37,7 @@ spec:
         - name: acr-secret
       containers:
         - name: web
-          image: flowfirst.azurecr.io/flowfirst/web:1.0.3
+          image: flowfirst.azurecr.io/flowfirst/web:1.0.5
           imagePullPolicy: IfNotPresent
 
           ports:
@@ -92,10 +92,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - hostedapi.flowfirst.ai
+    - hosted.flowfirst.ai
     secretName: flowfirst-frontend-tls
   rules:
-    - host: hostedapi.flowfirst.ai
+    - host: hosted.flowfirst.ai
       http:
         paths:
           - path: /

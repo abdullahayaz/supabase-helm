@@ -4,7 +4,7 @@ secret:
     serviceKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NjcwMzQ4MDAsImV4cCI6MTkyNDgwMTIwMH0.2xTMLxC8O7i0wskvG5cQ6ILwkoFR_5oOcWQ1Bn0DpSs"
     secret: "zZxVbxUUJtPLEkKGcV77HGMzuK8ANCUPqrKOg70V"
   smtp:
-    username: your-mail@hosted.flowfirst.ai
+    username: your-mail@hostedapi.flowfirst.ai
     password: example123456
   dashboard:
     username: admin
@@ -63,7 +63,7 @@ studio:
   environment:
     DEFAULT_ORGANIZATION_NAME: Default Organization # You can change these default names
     DEFAULT_PROJECT_NAME: Default Project # You can change these default names
-    SUPABASE_PUBLIC_URL: https://hosted.flowfirst.ai # Your Supabase URL
+    SUPABASE_PUBLIC_URL: https://hostedapi.flowfirst.ai # Your Supabase URL
     NEXT_PUBLIC_ENABLE_LOGS: true 
     SNIPPETS_MANAGEMENT_FOLDER: /var/lib/studio/snippets # the location inside studio pod that stores the sql code files written from SQL editor
   serviceAccount:
@@ -85,14 +85,14 @@ auth:
     pullPolicy: IfNotPresent
     tag: "v2.184.0"  # https://github.com/supabase/auth/releases
   environment:
-    API_EXTERNAL_URL: https://hosted.flowfirst.ai
-    GOTRUE_SITE_URL: https://hosted.flowfirst.ai
+    API_EXTERNAL_URL: https://hostedapi.flowfirst.ai
+    GOTRUE_SITE_URL: https://hostedapi.flowfirst.ai
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"  # For smpt configuration
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@hosted.flowfirst.ai"
-    GOTRUE_SMTP_HOST: "smtp.hosted.flowfirst.ai"
+    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@hostedapi.flowfirst.ai"
+    GOTRUE_SMTP_HOST: "smtp.hostedapi.flowfirst.ai"
     GOTRUE_SMTP_PORT: "587"
-    GOTRUE_SMTP_SENDER_NAME: "your-mail@hosted.flowfirst.ai"
+    GOTRUE_SMTP_SENDER_NAME: "your-mail@hostedapi.flowfirst.ai"
     DB_USER: supabase_admin   # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_DRIVER: postgres
     DB_PORT: 5432
@@ -271,9 +271,9 @@ kong:
     tls:
       - secretName: supabase-tls
         hosts:
-          - hosted.flowfirst.ai
+          - hostedapi.flowfirst.ai
     hosts:
-      - host: hosted.flowfirst.ai
+      - host: hostedapi.flowfirst.ai
         paths:
           - path: /
             pathType: Prefix
