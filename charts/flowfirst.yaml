@@ -37,7 +37,7 @@ spec:
         - name: acr-secret
       containers:
         - name: web
-          image: flowfirst.azurecr.io/flowfirst/web:1.0.5
+          image: flowfirst.azurecr.io/flowfirst/web:1.0.6
           imagePullPolicy: IfNotPresent
 
           ports:

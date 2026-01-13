@@ -87,6 +87,10 @@ auth:
   environment:
     API_EXTERNAL_URL: https://hostedapi.flowfirst.ai
     GOTRUE_SITE_URL: https://hostedapi.flowfirst.ai
+    GOTRUE_JWT_EXP: "3600"
+    GOTRUE_JWT_AUD: "authenticated"
+    GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+    GOTRUE_JWT_ADMIN_ROLES: "supabase_admin,service_role"
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"  # For smpt configuration
     GOTRUE_MAILER_AUTOCONFIRM: "true"
     GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@hostedapi.flowfirst.ai"
