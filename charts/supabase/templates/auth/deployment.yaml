@@ -62,7 +62,7 @@ spec:
             {{- end }}
             {{- if .Values.db.enabled }}
             - name: DB_HOST
-              value: {{ include "supabase.db.fullname" . }}
+              value: supabase-postgresql-poc.postgres.database.azure.com
             {{- end }}
             - name: DB_PASSWORD
               valueFrom:

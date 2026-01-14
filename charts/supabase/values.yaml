@@ -4,15 +4,15 @@ secret:
     serviceKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NjcwMzQ4MDAsImV4cCI6MTkyNDgwMTIwMH0.2xTMLxC8O7i0wskvG5cQ6ILwkoFR_5oOcWQ1Bn0DpSs"
     secret: "zZxVbxUUJtPLEkKGcV77HGMzuK8ANCUPqrKOg70V"
   smtp:
-    username: your-mail@hostedapi.flowfirst.ai
+    username: your-mail@test-db.staging.floorzap.info
     password: example123456
   dashboard:
     username: admin
     password: admin
     openAiApiKey: api-key
   db:
-    password: example123456
-    database: postgres
+    password: abcd@123456789
+    database: supabase
   analytics:
     publicAccessToken: mL79jbAlfZDsfqJWbBQtFkZJfb241WW0
     privateAccessToken: 2Q2M2SlIorbgXlF/UiorQ35AqRAu80q6
@@ -26,7 +26,7 @@ secret:
     accessKey: "asdbjahsbdjhasd"
 
 db:
-  enabled: true
+  enabled: false
   image:
     repository: supabase/postgres
     pullPolicy: IfNotPresent
@@ -63,7 +63,7 @@ studio:
   environment:
     DEFAULT_ORGANIZATION_NAME: Default Organization # You can change these default names
     DEFAULT_PROJECT_NAME: Default Project # You can change these default names
-    SUPABASE_PUBLIC_URL: https://hostedapi.flowfirst.ai # Your Supabase URL
+    SUPABASE_PUBLIC_URL: https://test-db.staging.floorzap.info # Your Supabase URL
     NEXT_PUBLIC_ENABLE_LOGS: true 
     SNIPPETS_MANAGEMENT_FOLDER: /var/lib/studio/snippets # the location inside studio pod that stores the sql code files written from SQL editor
   serviceAccount:
@@ -85,22 +85,23 @@ auth:
     pullPolicy: IfNotPresent
     tag: "v2.184.0"  # https://github.com/supabase/auth/releases
   environment:
-    API_EXTERNAL_URL: https://hostedapi.flowfirst.ai
-    GOTRUE_SITE_URL: https://hostedapi.flowfirst.ai
+    API_EXTERNAL_URL: https://test-db.staging.floorzap.info
+    GOTRUE_SITE_URL: https://test-db.staging.floorzap.info
     GOTRUE_JWT_EXP: "3600"
     GOTRUE_JWT_AUD: "authenticated"
     GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
     GOTRUE_JWT_ADMIN_ROLES: "supabase_admin,service_role"
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"  # For smpt configuration
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@hostedapi.flowfirst.ai"
-    GOTRUE_SMTP_HOST: "smtp.hostedapi.flowfirst.ai"
+    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@test-db.staging.floorzap.info"
+    GOTRUE_SMTP_HOST: "smtp.test-db.staging.floorzap.info"
     GOTRUE_SMTP_PORT: "587"
-    GOTRUE_SMTP_SENDER_NAME: "your-mail@hostedapi.flowfirst.ai"
-    DB_USER: supabase_admin   # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
+    GOTRUE_SMTP_SENDER_NAME: "your-mail@test-db.staging.floorzap.info"
+    DB_USER: admin_user   # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_DRIVER: postgres
     DB_PORT: 5432
     DB_SSL: disable
+    DB_HOST: supabase-postgresql-poc.postgres.database.azure.com
   serviceAccount:
     create: true
   service:
@@ -116,7 +117,7 @@ rest:
     pullPolicy: IfNotPresent
     tag: "latest" # https://github.com/PostgREST/postgrest/releases
   environment:
-    DB_USER: supabase_admin # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
+    DB_USER: admin_user # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_SSL: disable
     DB_PORT: 5432
     DB_DRIVER: postgres
@@ -137,7 +138,7 @@ realtime: # service that enables real-time capabilities to Postgres
 
   # for details regarding environment variables see https://github.com/supabase/realtime/blob/main/README.md
   environment: 
-    DB_USER: supabase_admin # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
+    DB_USER: admin_user # The database name and password come from secret db host is dynamically set to the db service created other things are configured in env
     DB_SSL: false
     DB_PORT: 5432
     DB_DRIVER: postgres
@@ -170,7 +171,7 @@ meta:
     tag: "v0.95.1"
   environment:
     DB_SSL: disable
-    DB_USER: supabase_admin
+    DB_USER: admin_user
     DB_PORT: 5432
   serviceAccount:
     create: true
@@ -188,7 +189,7 @@ storage:
     tag: "latest"
   # for details regarding environment variables see https://github.com/supabase/storage/blob/master/.env.sample
   environment:
-    DB_USER: supabase_admin
+    DB_USER: admin_user
     DB_PORT: 5432
     DB_SSL: disable
     DB_DRIVER: postgres
@@ -275,9 +276,9 @@ kong:
     tls:
       - secretName: supabase-tls
         hosts:
-          - hostedapi.flowfirst.ai
+          - test-db.staging.floorzap.info
     hosts:
-      - host: hostedapi.flowfirst.ai
+      - host: test-db.staging.floorzap.info
         paths:
           - path: /
             pathType: Prefix
@@ -289,7 +290,8 @@ analytics:
     pullPolicy: IfNotPresent
     tag: "1.27.3"
   environment:
-    DB_USERNAME: supabase_admin
+    DB_HOST: supabase-postgresql-poc.postgres.database.azure.com
+    DB_USERNAME: admin_user
     DB_PORT: 5432
     DB_DRIVER: postgres
     DB_SCHEMA: _analytics
@@ -351,6 +353,7 @@ functions:
     tag: "latest"
   environment:
     ADMIN_SETUP_SECRET: Bottle@1234%
+    DB_HOST: supabase-postgresql-poc.postgres.database.azure.com
   serviceAccount:
     create: true
   imagePullSecrets:
